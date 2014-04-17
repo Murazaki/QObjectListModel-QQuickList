@@ -114,29 +114,23 @@ bool QObjectListModel::removeAt(int row) {
 
 bool QObjectListModel::insertRows(int row, int count, const QModelIndex &parent) {
     Q_UNUSED(parent);
-//    beginInsertRows(QModelIndex(), row, row + count - 1);
+    beginInsertRows(QModelIndex(), row, row + count - 1);
     for (int i = row; i < row + count; ++ i) {
-        beginInsertRows(QModelIndex(), row + i, row + i);
         QObject * object = m_factory();
         Q_ASSERT(object);
         m_data.insert(i, object);
         updateTracking(object);
         QQmlEngine::setObjectOwnership(object, QQmlEngine::CppOwnership);
-        endInsertRows();
     }
-//    endInsertRows();
+    endInsertRows();
     return true;
 }
 
 bool QObjectListModel::removeRows(int row, int count, const QModelIndex &parent) {
     Q_UNUSED(parent);
-//    beginRemoveRows(QModelIndex(), row, row + count - 1);
-    while (count--) {
-        beginRemoveRows(QModelIndex(), row, row);
-        m_data.takeAt(row);
-        endRemoveRows();
-    }
-//    endRemoveRows();
+    beginRemoveRows(QModelIndex(), row, row + count - 1);
+    while (count--) m_data.takeAt(row);
+    endRemoveRows();
     return true;
 }
 

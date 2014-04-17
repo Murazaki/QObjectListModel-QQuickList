@@ -62,16 +62,14 @@ public:
             row = m_data.count();
 
         if(!items.empty()) {
-//            beginInsertRows(QModelIndex(), row, row + items.count() - 1);
+            beginInsertRows(QModelIndex(), row, row + items.count() - 1);
             for (int i = 0; i < items.count(); ++ i) {
-                beginInsertRows(QModelIndex(), row + i, row + i);
                 Q_ASSERT(items[i]);
                 m_data.insert(i + row,items[i]);
                 updateTracking(items[i]);
                 QQmlEngine::setObjectOwnership(items[i], QQmlEngine::CppOwnership);
-                endInsertRows();
             }
-//            endInsertRows();
+            endInsertRows();
         }
 
         return true;
