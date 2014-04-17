@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="main.qml">qml/ObjectListModel/main.qml</file>
+    </qresource>
+</RCC>
