@@ -126,6 +126,48 @@ bool QObjectListModel::insertRows(int row, int count, const QModelIndex &parent)
     return true;
 }
 
+bool QObjectListModel::moveRows(int sourceRow, int count, int destinationChild) {
+    return moveRows(QModelIndex(), sourceRow, count, QModelIndex(), destinationChild);
+}
+
+bool QObjectListModel::moveRows(const QModelIndex & sourceParent, int sourceRow, int count, const QModelIndex & destinationParent, int destinationChild) {
+    QObjectList tmp;
+
+    Q_UNUSED(sourceParent);
+    Q_UNUSED(destinationParent);
+
+    qDebug() << "moveRows :: sourceRow : " << sourceRow;
+    qDebug() << "moveRows :: count : " << count;
+    qDebug() << "moveRows :: destinationChild : " << destinationChild;
+
+    if (sourceRow + count - 1 < destinationChild) {
+        beginMoveRows(QModelIndex(), sourceRow, sourceRow + count - 1, QModelIndex(), destinationChild + 1);
+        for (int i = sourceRow; i < sourceRow + count; i++) {
+            Q_ASSERT(m_data[i]);
+            tmp << m_data.takeAt(i);
+        }
+        for (int i = 0; i < count; i++) {
+            Q_ASSERT(tmp[i]);
+            m_data.insert(destinationChild - count + 2 + i,tmp[i]);
+            updateTracking(m_data[destinationChild - count + 2 + i]);
+        }
+        endMoveRows();
+    } else if (sourceRow > destinationChild) {
+        beginMoveRows(QModelIndex(), sourceRow, sourceRow + count - 1, QModelIndex(), destinationChild);
+        for (int i = sourceRow; i < sourceRow + count; i++) {
+            Q_ASSERT(m_data[i]);
+            tmp << m_data.takeAt(i);
+        }
+        for (int i = 0; i < count; i++) {
+            Q_ASSERT(tmp[i]);
+            m_data.insert(destinationChild + i,tmp[i]);
+            updateTracking(m_data[destinationChild + i]);
+        }
+        endMoveRows();
+    }
+    return true;
+}
+
 bool QObjectListModel::removeRows(int row, int count, const QModelIndex &parent) {
     Q_UNUSED(parent);
     beginRemoveRows(QModelIndex(), row, row + count - 1);

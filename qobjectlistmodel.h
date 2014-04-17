@@ -63,7 +63,7 @@ public:
 
         if(!items.empty()) {
             beginInsertRows(QModelIndex(), row, row + items.count() - 1);
-            for (int i = 0; i < items.count(); ++ i) {
+            for(int i = 0; i < items.count(); i++) {
                 Q_ASSERT(items[i]);
                 m_data.insert(i + row,items[i]);
                 updateTracking(items[i]);
@@ -74,6 +74,8 @@ public:
 
         return true;
     }
+    bool moveRows(int sourceRow, int count, int destinationChild);
+    bool moveRows(const QModelIndex & sourceParent, int sourceRow, int count, const QModelIndex & destinationParent, int destinationChild) Q_DECL_OVERRIDE;
     bool removeAll(QObject * const &item);
     bool removeOne(QObject * const &item);
     bool removeAt(int row);
@@ -156,8 +158,21 @@ public:
     inline T * takeAt(int i) { m_model->removeAt(i); return QList::takeAt(i); }
     inline T * takeFirst() { m_model->removeAt(0); return QList::takeFirst(); }
     inline T * takeLast() { m_model->removeAt(count() - 1); return QList::takeLast(); }
-    inline void move(int from, int to) { QList::move(from,to); m_model->removeAt(from); m_model->insert(this->at(to),to); }
-    inline void swap(int i, int j) { QList::swap(i,j); m_model->removeAt(i); m_model->insert(this->at(i),i); m_model->removeAt(j); m_model->insert(this->at(j),j); }
+    inline void move(int from, int to) { QList::move(from,to); m_model->moveRows(from,1,to); }
+    inline void swap(int i, int j) {
+        if(j>i) {
+            m_model->moveRows(i,1,j);
+            m_model->moveRows(j+1,1,i);
+        }
+        else if (i>j) {
+            m_model->moveRows(i,1,j);
+            m_model->moveRows(j,1,i);
+        }
+        else
+            return;
+
+        QList::swap(i,j);
+    }
 
     inline iterator insert(iterator before, T *const &t) {  m_model->insert(t,before-begin()); return QList::insert(before,t); }
     inline iterator erase(iterator pos) {  m_model->removeAt(pos - begin()); return QList::erase(pos); }

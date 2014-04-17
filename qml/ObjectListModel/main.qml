@@ -113,13 +113,13 @@ ApplicationWindow {
 
                 ListView.onAdd: SequentialAnimation {
                     PropertyAction { target: rect; property: "x"; value: -rect.width }
-                    PropertyAnimation { target: rect; property: "height"; from: 0; to:rect.implicitHeight; duration: 100; easing.type: Easing.InOutQuad }
+//                    PropertyAnimation { target: rect; property: "height"; from: 0; to:rect.implicitHeight; duration: 100; easing.type: Easing.InOutQuad }
                     PropertyAnimation { target: rect; property: "x"; from: -rect.width; to:rect.x; duration:250; easing.type: Easing.InOutQuad }
                 }
                 ListView.onRemove: SequentialAnimation {
                     PropertyAction { target: rect; property: "ListView.delayRemove"; value: true }
                     PropertyAnimation { target: rect; property: "x"; from: rect.x; to:rect.width; duration: 250; easing.type: Easing.InOutQuad }
-                    PropertyAnimation { target: rect; property: "height"; from:rect.implicitHeight; to: 0; duration: 100; easing.type: Easing.InOutQuad }
+//                    PropertyAnimation { target: rect; property: "height"; from:rect.implicitHeight; to: 0; duration: 100; easing.type: Easing.InOutQuad }
                     PropertyAction { target: rect; property: "ListView.delayRemove"; value: false }
                 }
             }
@@ -133,6 +133,18 @@ ApplicationWindow {
             model: testobject.listProperty
             delegate: commonDelegate1
             spacing: 2
+
+            addDisplaced: Transition {
+                    NumberAnimation { properties: "x,y"; duration: 100; easing.type: Easing.InOutQuad }
+                }
+
+            moveDisplaced: Transition {
+                    NumberAnimation { properties: "x,y"; duration: 500; easing.type: Easing.InOutQuad }
+                }
+
+            removeDisplaced: Transition {
+                    NumberAnimation { properties: "x,y"; duration: 100; easing.type: Easing.InOutQuad }
+                }
         }
         ListView {
             width: (parent.width - parent.spacing)/2
@@ -142,6 +154,18 @@ ApplicationWindow {
             model: testobject.model
             delegate: commonDelegate2
             spacing: 2
+
+            addDisplaced: Transition {
+                    NumberAnimation { properties: "x,y"; duration: 100; easing.type: Easing.InOutQuad }
+                }
+
+            moveDisplaced: Transition {
+                    NumberAnimation { properties: "x,y"; duration: 100; easing.type: Easing.InOutQuad }
+                }
+
+            removeDisplaced: Transition {
+                    NumberAnimation { properties: "x,y"; duration: 100; easing.type: Easing.InOutQuad }
+                }
         }
     }
     Flow {
