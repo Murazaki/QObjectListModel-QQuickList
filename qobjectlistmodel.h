@@ -28,17 +28,10 @@ public:
 
     //! A factory to get a model of QList<T*>
     template<class T> static QObjectListModel * create(QList<T*> list, QObject * parent = NULL) {
-        T * assertObject = new T();
-        Q_ASSERT_X(qobject_cast<QObject *>(assertObject),"QQuickList<T>::QQuickList","Typename T does not inherit from QObject.");
-        delete assertObject;
-
         QObjectListModel * newModel = new QObjectListModel(&T::staticMetaObject, parent);
 
-        newModel->m_data.clear();
-
-        foreach(T * elt, list) {
-            newModel->m_data << elt;
-        }
+        newModel->clear();
+        newModel->insert(list);
 
         return newModel;
     }
@@ -53,7 +46,6 @@ public:
     bool setData(const QModelIndex &index, const QVariant &value, int role) Q_DECL_OVERRIDE;
     bool insert(QObject * const &item, int row = -1);
     template<class T> bool insert(QList <T*> const &items, int row = -1) {
-
         T * assertObject = new T();
         Q_ASSERT_X(qobject_cast<QObject *>(assertObject),"QQuickList<T>::QQuickList","Typename T does not inherit from QObject.");
         delete assertObject;
@@ -76,11 +68,36 @@ public:
     }
     bool moveRows(int sourceRow, int count, int destinationChild);
     bool moveRows(const QModelIndex & sourceParent, int sourceRow, int count, const QModelIndex & destinationParent, int destinationChild) Q_DECL_OVERRIDE;
+    bool clear();
     bool removeAll(QObject * const &item);
     bool removeOne(QObject * const &item);
     bool removeAt(int row);
     bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) Q_DECL_OVERRIDE;
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) Q_DECL_OVERRIDE;
+
+    template <typename T, typename LessThan>
+    void sort(T *t, LessThan lessThan) {
+        Q_UNUSED(t);
+
+        QList<T*> listtosort;
+
+        foreach(QObject * object, m_data) {
+            listtosort << dynamic_cast<T*>(object);
+        }
+
+        qSort(listtosort.begin(),listtosort.end(),lessThan);
+
+        int oldpos = 0;
+
+        for(int i = 0; i < listtosort.length(); i++) {
+            oldpos = m_data.lastIndexOf((QObject*)listtosort[i]);
+            if(oldpos > i) {
+                beginMoveRows(QModelIndex(),oldpos,oldpos,QModelIndex(),i);
+                m_data.move(oldpos,i);
+                endMoveRows();
+            }
+        }
+    }
 
 protected:
     //! Emits the notifications of changes done on the underlying QObject properties
@@ -143,8 +160,8 @@ public:
 #endif
 
     inline void clear() {
-        QList::clear();
         m_model->clear();
+        QList::clear();
     }
 
     inline void append(T *const & t) { QList::append(t); m_model->insert(t); }
@@ -207,6 +224,15 @@ public:
 
     inline operator QList<T*> ()
     { return (QList)*this; }
+
+    template <typename LessThan>
+    inline void sort(LessThan lessThan)
+    {
+        if (this->begin() != this->end()){
+            qSort(this->begin(),this->end(), lessThan);
+            m_model->sort((*this->begin()),lessThan);
+        }
+    }
 };
 
 #endif // QOBJECTMODEL_H

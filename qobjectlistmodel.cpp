@@ -68,6 +68,19 @@ bool QObjectListModel::insert(QObject * const &item, int row) {
     return true;
 }
 
+bool QObjectListModel::clear() {
+    bool out = false;
+
+    if(!m_data.empty()) {
+        beginRemoveRows(QModelIndex(), 0, m_data.length() - 1);
+        m_data.clear();
+        out = true;
+        endRemoveRows();
+    }
+
+    return out;
+}
+
 bool QObjectListModel::removeAll(QObject * const &item) {
     int i;
     bool out = false;
