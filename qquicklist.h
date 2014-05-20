@@ -10,11 +10,12 @@ class QObjectListModel;
 
 template<typename T> class QQuickList : public QList<T*> {
 
-    typedef typename QList<T*>::iterator iterator;
-
     QObjectListModel * m_model;
 
 public:
+
+    typedef typename QList<T*>::iterator iterator;
+
     inline QQuickList() : m_model(new QObjectListModel(&T::staticMetaObject)) {
 
     }
