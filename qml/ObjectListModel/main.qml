@@ -139,7 +139,7 @@ ApplicationWindow {
                 }
 
             moveDisplaced: Transition {
-                    NumberAnimation { properties: "x,y"; duration: 500; easing.type: Easing.InOutQuad }
+                    NumberAnimation { properties: "x,y"; duration: 100; easing.type: Easing.InOutQuad }
                 }
 
             removeDisplaced: Transition {

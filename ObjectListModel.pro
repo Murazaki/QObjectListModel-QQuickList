@@ -25,4 +25,7 @@ RESOURCES += \
 HEADERS += \
     qobjectlistmodel.h \
     person.h \
-    testobject.h
+    testobject.h \
+    qquicklist.h
+
+QMAKE_CXXFLAGS += -std=c++11

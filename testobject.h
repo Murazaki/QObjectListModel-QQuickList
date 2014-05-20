@@ -2,7 +2,7 @@
 #define TESTOBJECT_H
 
 #include <QObject>
-#include "qobjectlistmodel.h"
+#include "qquicklist.h"
 #include "person.h"
 
 class TestObject : public QObject
