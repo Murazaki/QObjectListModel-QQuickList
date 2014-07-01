@@ -32,8 +32,16 @@ public:
 
     inline QObjectListModel * getModel() { return m_model; }
 
-    inline QQuickList<T> &operator=(const QList<T*> &l) { return QQuickList(QList<T*>::operator=(l)); }
-    inline QQuickList<T> &operator=(const QQuickList<T> &l) { return QQuickList<T>::operator=(QList<T*>(l)); }
+    inline QQuickList<T> &operator=(const QList<T*> &l) {
+        this->clear();
+        this->append(l);
+        return *this;
+    }
+    inline QQuickList<T> &operator=(const QQuickList<T> &l) {
+        this->clear();
+        this->append(l);
+        return *this;
+    }
 #ifdef Q_COMPILER_RVALUE_REFS
     inline QQuickList(QList<T*> &&other) : QList<T*>(other), m_model(QObjectListModel::create(other))
     {
@@ -41,8 +49,16 @@ public:
         Q_ASSERT_X(qobject_cast<QObject *>(assertObject),"QQuickList<T>::QQuickList","Typename T does not inherit from QObject.");
         delete assertObject;
     }
-    inline QQuickList &operator=(QList<T*> &&other) { return *(new QQuickList(QList<T*>::operator=(other))); }
-    inline QQuickList &operator=(QQuickList<T> &&other) { return QQuickList::operator=(QList<T*>(other)); }
+    inline QQuickList &operator=(QList<T*> &&other) {
+        this->clear();
+        this->append(*other);
+        return *this;
+    }
+    inline QQuickList &operator=(QQuickList<T> &&other) {
+        this->clear();
+        this->append(*other);
+        return *this;
+    }
 #endif
 
 #ifdef Q_COMPILER_INITIALIZER_LISTS
@@ -87,8 +103,8 @@ public:
     iterator erase(iterator pos);
     iterator erase(iterator first, iterator last);
 
-    inline void removeFirst() { QList<T*>::removeFirst(); m_model->removeAt(0); }
-    inline void removeLast() { QList<T*>::removeLast(); m_model->removeAt(QList<T*>::count() - 1); }
+    inline void removeFirst() { QList<T*>::removeFirst(); m_model->removeFirst(); }
+    inline void removeLast() { QList<T*>::removeLast(); m_model->removeLast(); }
 
     // stl compatibility
     inline void push_back(T *const &t) { append(t); }

@@ -125,6 +125,15 @@ bool QObjectListModel::removeAt(int row) {
     return false;
 }
 
+
+bool QObjectListModel::removeFirst() {
+    return removeAt(0);
+}
+
+bool QObjectListModel::removeLast() {
+    return removeAt(m_data.count()-1);
+}
+
 bool QObjectListModel::insertRows(int row, int count, const QModelIndex &parent) {
     Q_UNUSED(parent);
     beginInsertRows(QModelIndex(), row, row + count - 1);

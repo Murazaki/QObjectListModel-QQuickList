@@ -66,6 +66,8 @@ public:
     bool removeAll(QObject * const &item);
     bool removeOne(QObject * const &item);
     bool removeAt(int row);
+    bool removeFirst();
+    bool removeLast();
     bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) Q_DECL_OVERRIDE;
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) Q_DECL_OVERRIDE;
 
